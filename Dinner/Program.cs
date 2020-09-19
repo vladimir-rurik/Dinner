@@ -29,7 +29,24 @@ namespace Dinner
 				("VE", "Allan Elkin") // vasakpoolne, on väga huvitatud sotsiaalsetest teemadest
 			};
 
-			Console.WriteLine("Hello World!");
+			foreach (var guest in guests)
+			{
+				for (int i = 0; i < 14; i++)
+				{
+					if (table[i] == (null, null))
+					{
+						table[i] = guest;
+						break;
+					}
+				}
+			}
+
+			Console.WriteLine($"        0 | {table[0].Item2} | ");
+			for (int i = 1; i < 7; i++)
+			{
+				Console.WriteLine($"{i} | {table[i].Item2} |  | {table[14-i].Item2} | {14-i}");
+			}
+			Console.WriteLine($"        7 | {table[7].Item2} | ");
 		}
 	}
 }
