@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.CompilerServices;
+using System;
 using System.Collections.Generic;
+using System.Security.Principal;
 
 namespace Dinner
 {
@@ -29,14 +31,35 @@ namespace Dinner
 				("VE", "Allan Elkin") // vasakpoolne, on väga huvitatud sotsiaalsetest teemadest
 			};
 
-			foreach (var guest in guests)
+			bool isTableFull = false;
+
+			while (!isTableFull)
 			{
-				for (int i = 0; i < 14; i++)
+				isTableFull = true;
+				foreach (var guest in guests)
 				{
-					if (table[i] == (null, null))
+					for (int i = 0; i < 14; i++)
 					{
-						table[i] = guest;
-						break;
+						if (table[i] == (null, null))
+						{
+							isTableFull = false;
+							bool isSeatFitFor = true;
+							int ii = i == 13 ? 7 : i + 1;
+							foreach (var @char in guest.Item1)
+							{
+								if (@char < 'A')
+									continue;
+								if ( (table[i - 1].Item1 != null && table[i - 1].Item1.Contains(@char))
+									|| (table[ii].Item1 != null && table[ii].Item1.Contains(@char))
+									|| (table[14 - i].Item1 != null && table[14 - i].Item1.Contains(@char)))
+								{
+									isSeatFitFor = false;
+								}
+							}
+							if(isSeatFitFor)
+								table[i] = guest;
+							break;
+						}
 					}
 				}
 			}
