@@ -31,6 +31,8 @@ namespace Dinner
 				("VE", "Allan Elkin") // vasakpoolne, on väga huvitatud sotsiaalsetest teemadest
 			};
 
+			List<(string, string)> tableGuests = new List<(string, string)>();
+
 			bool isTableFull = false;
 
 			while (!isTableFull)
@@ -56,8 +58,11 @@ namespace Dinner
 									isSeatFitFor = false;
 								}
 							}
-							if(isSeatFitFor)
+							if (isSeatFitFor && !tableGuests.Contains(guest))
+							{
 								table[i] = guest;
+								tableGuests.Add(guest);
+							}
 							break;
 						}
 					}
