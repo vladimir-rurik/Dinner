@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -35,9 +36,11 @@ namespace Dinner
 				("VE", "Allan Elkin") // vasakpoolne, on väga huvitatud sotsiaalsetest teemadest
 			};
 
+			List<string> tableCompletedIds = new List<string>();
 			List<(string, string)> tableGuests = new List<(string, string)>();
 
 			bool isTableFull = false;
+			string tableCompleteId = string.Empty;
 
 			while (!isTableFull)
 			{
@@ -65,6 +68,7 @@ namespace Dinner
 							if (isSeatFitFor && !tableGuests.Contains(guest))
 							{
 								table[i] = guest;
+								tableCompleteId += guest;
 								tableGuests.Add(guest);
 							}
 							break;
@@ -72,8 +76,10 @@ namespace Dinner
 					}
 				}
 			}
-
-			Print(table);
+			//Console.WriteLine(tableCompleteId);
+			if(!tableCompletedIds.Contains(tableCompleteId))
+				Print(table);
+			tableCompletedIds.Add(tableCompleteId);
 
 			//foreach (var item in Permutate(guests.Select(n => n.Item2).ToList(), 8)) //guests.Count = 12
 			//{
