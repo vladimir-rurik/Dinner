@@ -1,6 +1,9 @@
 ﻿using Microsoft.VisualBasic.CompilerServices;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Xml.Schema;
 
@@ -71,6 +74,25 @@ namespace Dinner
 			}
 
 			Print(table);
+
+			//foreach (var item in Permutate(guests.Select(n => n.Item2).ToList(), 8)) //guests.Count = 12
+			//{
+			//	foreach(var s in item)
+			//		Console.Write(s+" , ");
+			//	Console.WriteLine();
+			//}
+
+			//var allCombinations = guests.Select(n => n.Item2).Permute();
+			//var stringList = new List<string>();
+
+			//         Console.WriteLine(allCombinations.Count());
+
+			//foreach (var item in allCombinations)
+			//{
+			//	stringList.Add(string.Join(",", item.ToArray()));
+			//	foreach(var s in stringList)
+			//		Console.WriteLine(s);
+			//}
 		}
 
 		static string FormatGuestName(string name, char filler = ' ')
@@ -88,6 +110,29 @@ namespace Dinner
 			}
 			Console.WriteLine($"                         | {FormatGuestName("", '-')} | ");
 			Console.WriteLine($"                       7 | {FormatGuestName(table[7].Item2)} | ");
+			Console.WriteLine();
+			Console.WriteLine();
+		}
+
+		public static void RotateRight(IList sequence, int count)
+		{
+			object tmp = sequence[count - 1];
+			sequence.RemoveAt(count - 1);
+			sequence.Insert(0, tmp);
+		}
+
+		public static IEnumerable<IList> Permutate(IList sequence, int count)
+		{
+			if (count == 1) yield return sequence;
+			else
+			{
+				for (int i = 0; i < count; i++)
+				{
+					foreach (var perm in Permutate(sequence, count - 1))
+						yield return perm;
+					RotateRight(sequence, count);
+				}
+			}
 		}
 	}
 }
