@@ -16,7 +16,7 @@ namespace Dinner
 		{
 			List<(string, string)> guests = new List<(string, string)>()
 			{
-                ("E+", "Anni Elkin"), // armunud
+				("E+", "Anni Elkin"), // armunud
 				("S+", "Kalle Sepp"), // armunud
 				("JR", "Jenny Harner"), // professor ja hr. Sepa kolleeg, 
 				// oskab rääkida huvitavaid lugusid, kuid on antisimitist
