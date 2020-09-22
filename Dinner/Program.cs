@@ -14,13 +14,9 @@ namespace Dinner
 	{
 		static void Main(string[] args)
 		{
-			(string, string)[] table = new (string, string)[14];
-			table[0] = ("SP", "hr. Sepp"); // ei meeldi pr. Elkin
-			table[7] = ("SH", "pr. Sepp"); // ei meeldi hr. Bertini
-
 			List<(string, string)> guests = new List<(string, string)>()
 			{
-				("E+", "Anni Elkin"), // armunud
+                ("E+", "Anni Elkin"), // armunud
 				("S+", "Kalle Sepp"), // armunud
 				("JR", "Jenny Harner"), // professor ja hr. Sepa kolleeg, 
 				// oskab rääkida huvitavaid lugusid, kuid on antisimitist
@@ -33,53 +29,74 @@ namespace Dinner
 				("PB", "pr. Bertini"), // lauakombed on väga halvad ja ta kurdab alati
 				("S", "Mari Sepp"), // hellitatud ja rahutu, 
 				// sageli ebaviisakas oma vanemate ja vanaema vastu
-				("VE", "Allan Elkin") // vasakpoolne, on väga huvitatud sotsiaalsetest teemadest
+				("VE", "Allan Elkin"), // vasakpoolne, on väga huvitatud sotsiaalsetest teemadest
+				//("S+", "Kalle Sepp"), // armunud
+				//("E+", "Anni Elkin"), // armunud
 			};
+			Dictionary<string, (string, string)> guestDic = new Dictionary<string, (string, string)>();
+
+			foreach (var item in guests)
+			{
+				guestDic.Add(item.Item2, item);
+			}
 
 			List<string> tableCompletedIds = new List<string>();
-			List<(string, string)> tableGuests = new List<(string, string)>();
 
-			bool isTableFull = false;
-			string tableCompleteId = string.Empty;
-
-			while (!isTableFull)
+			foreach (var guestNamesIteration in Permutate(guests.Select(n => n.Item2).ToList(), 8)) //guests.Count = 12
 			{
-				isTableFull = true;
-				foreach (var guest in guests)
+				(string, string)[] table = new (string, string)[14];
+				table[0] = ("SP", "hr. Sepp"); // ei meeldi pr. Elkin
+				table[7] = ("SH", "pr. Sepp"); // ei meeldi hr. Bertini
+
+				List<(string, string)> tableGuests = new List<(string, string)>();
+				bool isTableFull = false;
+				string tableCompleteId = string.Empty;
+
+				while (!isTableFull)
 				{
-					for (int i = 0; i < 14; i++)
+					isTableFull = true;
+					foreach (var guestName in guestNamesIteration)
 					{
-						if (table[i] == (null, null))
+						var guest = guestDic[guestName as string];
+						for (int i = 0; i < 14; i++)
 						{
-							isTableFull = false;
-							bool isSeatFitFor = true;
-							int ii = i == 13 ? 7 : i + 1;
-							foreach (var @char in guest.Item1)
+							if (table[i] == (null, null))
 							{
-								if (@char < 'A')
-									continue;
-								if ((table[i - 1].Item1 != null && table[i - 1].Item1.Contains(@char))
-									|| (table[ii].Item1 != null && table[ii].Item1.Contains(@char))
-									|| (table[14 - i].Item1 != null && table[14 - i].Item1.Contains(@char)))
+								isTableFull = false;
+								bool isSeatFitFor = true;
+								int ii = i == 13 ? 7 : i + 1;
+								foreach (var @char in guest.Item1)
 								{
-									isSeatFitFor = false;
+									if (@char < 'A')
+										continue;
+									if ((table[i - 1].Item1 != null && table[i - 1].Item1.Contains(@char))
+										|| (table[ii].Item1 != null && table[ii].Item1.Contains(@char))
+										|| (table[14 - i].Item1 != null && table[14 - i].Item1.Contains(@char)))
+									{
+										isSeatFitFor = false;
+									}
 								}
+								if (isSeatFitFor && !tableGuests.Contains(guest))
+								{
+									table[i] = guest;
+									tableCompleteId += guest;
+									tableGuests.Add(guest);
+								}
+								break;
 							}
-							if (isSeatFitFor && !tableGuests.Contains(guest))
-							{
-								table[i] = guest;
-								tableCompleteId += guest;
-								tableGuests.Add(guest);
-							}
-							break;
 						}
+					}
+
+					if (isTableFull)
+					{
+						//Console.WriteLine(tableCompleteId);
+						if (!tableCompletedIds.Contains(tableCompleteId))
+							Print(table);
+						tableCompletedIds.Add(tableCompleteId);
+
 					}
 				}
 			}
-			//Console.WriteLine(tableCompleteId);
-			if(!tableCompletedIds.Contains(tableCompleteId))
-				Print(table);
-			tableCompletedIds.Add(tableCompleteId);
 
 			//foreach (var item in Permutate(guests.Select(n => n.Item2).ToList(), 8)) //guests.Count = 12
 			//{
