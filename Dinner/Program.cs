@@ -42,7 +42,7 @@ namespace Dinner
 
 			List<string> tableCompletedIds = new List<string>();
 
-			foreach (var guestNamesIteration in 
+			foreach (var guestNamesIteration in
 				Permutate(guests.Select(n => n.Item2).ToList(), 10)) //guests.Count = 12
 			{
 				(string, string)[] table = new (string, string)[14];
@@ -102,8 +102,11 @@ namespace Dinner
 					if (isTableFull)
 					{
 						//Console.WriteLine(tableCompleteId);
-						if (!tableCompletedIds.Contains(tableCompleteId))
+						if (!tableCompletedIds.Contains(tableCompleteId)
+							&& isLoversCloseTo(table, '+'))
+						{
 							Print(table);
+						}
 						tableCompletedIds.Add(tableCompleteId);
 					}
 					if (tableCompleteIdLast == tableCompleteId)
@@ -112,25 +115,18 @@ namespace Dinner
 					tableCompleteIdLast = tableCompleteId;
 				}
 			}
+		}
 
-			//foreach (var item in Permutate(guests.Select(n => n.Item2).ToList(), 8)) //guests.Count = 12
-			//{
-			//	foreach(var s in item)
-			//		Console.Write(s+" , ");
-			//	Console.WriteLine();
-			//}
+		static bool isLoversCloseTo((string, string)[] table, char loversChar)
+		{
+			List<int> indices = table.Select((s, i) => new { i, s })
+				.Where(t => t.s.Item1.Contains(loversChar))
+				.Select(t => t.i)
+				.ToList();
+			int indicesSub = indices[0] - indices[1];
+			int indicesSum = indices[0] + indices[1];
 
-			//var allCombinations = guests.Select(n => n.Item2).Permute();
-			//var stringList = new List<string>();
-
-			//         Console.WriteLine(allCombinations.Count());
-
-			//foreach (var item in allCombinations)
-			//{
-			//	stringList.Add(string.Join(",", item.ToArray()));
-			//	foreach(var s in stringList)
-			//		Console.WriteLine(s);
-			//}
+			return indicesSub == 1 || indicesSub == -1 || indicesSum == 14;
 		}
 
 		static string FormatGuestName(string name, char filler = ' ')
