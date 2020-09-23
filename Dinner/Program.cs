@@ -16,8 +16,8 @@ namespace Dinner
 		{
 			List<(string, string)> guests = new List<(string, string)>()
 			{
-				("E+", "Anni Elkin"), // armunud
-				("S+", "Kalle Sepp"), // armunud
+				//("E+", "Anni Elkin"), // armunud
+				//("S+", "Kalle Sepp"), // armunud
 				("JR", "Jenny Harner"), // professor ja hr. Sepa kolleeg, 
 				// oskab rääkida huvitavaid lugusid, kuid on antisimitist
 				("E", "Margaret Elkin"), // väga korrekne, viisakas ja ebahuvitav
@@ -30,8 +30,8 @@ namespace Dinner
 				("S", "Mari Sepp"), // hellitatud ja rahutu, 
 				// sageli ebaviisakas oma vanemate ja vanaema vastu
 				("VE", "Allan Elkin"), // vasakpoolne, on väga huvitatud sotsiaalsetest teemadest
-				//("S+", "Kalle Sepp"), // armunud
-				//("E+", "Anni Elkin"), // armunud
+				("S+", "Kalle Sepp"), // armunud
+				("E+", "Anni Elkin"), // armunud
 			};
 			Dictionary<string, (string, string)> guestDic = new Dictionary<string, (string, string)>();
 
@@ -42,17 +42,19 @@ namespace Dinner
 
 			List<string> tableCompletedIds = new List<string>();
 
-			foreach (var guestNamesIteration in Permutate(guests.Select(n => n.Item2).ToList(), 8)) //guests.Count = 12
+			foreach (var guestNamesIteration in 
+				Permutate(guests.Select(n => n.Item2).ToList(), 10)) //guests.Count = 12
 			{
 				(string, string)[] table = new (string, string)[14];
 				table[0] = ("SP", "hr. Sepp"); // ei meeldi pr. Elkin
 				table[7] = ("SH", "pr. Sepp"); // ei meeldi hr. Bertini
 
 				List<(string, string)> tableGuests = new List<(string, string)>();
-				bool isTableFull = false;
+				bool isTableFull = false, isTableCompleted = false;
 				string tableCompleteId = string.Empty;
+				string tableCompleteIdLast = string.Empty;
 
-				while (!isTableFull)
+				while (!isTableFull && !isTableCompleted)
 				{
 					isTableFull = true;
 					foreach (var guestName in guestNamesIteration)
@@ -68,12 +70,22 @@ namespace Dinner
 								foreach (var @char in guest.Item1)
 								{
 									if (@char < 'A')
-										continue;
-									if ((table[i - 1].Item1 != null && table[i - 1].Item1.Contains(@char))
-										|| (table[ii].Item1 != null && table[ii].Item1.Contains(@char))
-										|| (table[14 - i].Item1 != null && table[14 - i].Item1.Contains(@char)))
 									{
-										isSeatFitFor = false;
+										if ((table[i - 1].Item1 != null && !table[i - 1].Item1.Contains(@char))
+										&& (table[ii].Item1 != null && !table[ii].Item1.Contains(@char))
+										&& (table[14 - i].Item1 != null && !table[14 - i].Item1.Contains(@char)))
+										{
+											isSeatFitFor = false;
+										}
+									}
+									else
+									{
+										if ((table[i - 1].Item1 != null && table[i - 1].Item1.Contains(@char))
+											|| (table[ii].Item1 != null && table[ii].Item1.Contains(@char))
+											|| (table[14 - i].Item1 != null && table[14 - i].Item1.Contains(@char)))
+										{
+											isSeatFitFor = false;
+										}
 									}
 								}
 								if (isSeatFitFor && !tableGuests.Contains(guest))
@@ -93,8 +105,11 @@ namespace Dinner
 						if (!tableCompletedIds.Contains(tableCompleteId))
 							Print(table);
 						tableCompletedIds.Add(tableCompleteId);
-
 					}
+					if (tableCompleteIdLast == tableCompleteId)
+						isTableCompleted = true;
+
+					tableCompleteIdLast = tableCompleteId;
 				}
 			}
 
